@@ -3,13 +3,13 @@
 ### Team name: JANND
 
 ### Team Members:
-| Name           | Github         | Email                        | Phone          |   |
-|----------------|----------------|------------------------------|----------------|---|
-| Jack McKinstry | @jackmckinstry | jack.mckinstry@colorado.edu  | 720-[redacted] |   |
-| David Ustyan   | @dustyan       | daus7152@colorado.edu        | 720-[redacted] |   |
-| Nate Weaver    | @nweaver412    | nawe1887@colorado.edu        | 412-[redacted] |   |
-| Nick Henley    | @nh602         | nicholas.henley@colorado.edu | 720-[redacted] |   |
-| Aaron Asibbey  | @aaronasibbey  | aaas7295@colorado.edu        | 720-[redacted] |   |
+| Name           | Github         | Email                        | Phone          |
+|----------------|----------------|------------------------------|----------------|
+| Jack McKinstry | @jackmckinstry | jack.mckinstry@colorado.edu  | 720-[redacted] |
+| David Ustyan   | @dustyan       | daus7152@colorado.edu        | 720-[redacted] |
+| Nate Weaver    | @nweaver412    | nawe1887@colorado.edu        | 412-[redacted] |
+| Nick Henley    | @nh602         | nicholas.henley@colorado.edu | 720-[redacted] |
+| Aaron Asibbey  | @aaronasibbey  | aaas7295@colorado.edu        | 720-[redacted] |
 
 ### Application Name: Homecare Project (working name)
 
@@ -36,6 +36,6 @@ Team Meeting: Monday, 3:30-4:30 PM, Discord/Zoom Video Call
 
 ![Use Case Diagram](usecase.jpg)
 
-### Wire Frames: 
+### Wireframes: 
 
-TODO
+![Wireframes](wireframes.png)
