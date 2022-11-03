@@ -55,3 +55,18 @@ app.get('/', (req, res) =>{
 app.get('/home', (req, res) => {
     res.render("pages/home");
   });
+
+
+// TODO: place authentication middleware and login methods PRIOR to nurse / patient portal pages
+
+app.get('/nurse', (req, res) => {
+  res.render("pages/nurse");
+});
+
+app.post('/selectpatient', (req,res) => {
+  // TODO, for nurse patient update form
+});
+
+app.post('/patientupdate', (req,res) => {
+  // TODO, for nurse patient update form
+});
