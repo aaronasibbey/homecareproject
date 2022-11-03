@@ -56,6 +56,17 @@ app.get('/home', (req, res) => {
     res.render("pages/home");
   });
 
+app.get('/login', (req, res) => {
+    res.render("pages/login");
+  });
+
+app.get('/register', (req, res) => {
+    res.render("pages/register");
+  });
+
+
+// TODO: place authentication middleware and login methods PRIOR to nurse / patient portal pages
+
 app.get('/patientInfo', (req, res)=> {
   //TODO: add database call
   const data = {
@@ -95,8 +106,6 @@ app.get('/patientInfo', (req, res)=> {
   }
   res.render("pages/patientInfo", {data}); 
 })
-
-// TODO: place authentication middleware and login methods PRIOR to nurse / patient portal pages
 
 app.get('/nurse', (req, res) => {
   res.render("pages/nurse");
