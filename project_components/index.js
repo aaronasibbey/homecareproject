@@ -94,6 +94,7 @@ app.get('/patientInfo', (req, res)=> {
     ]
   }
   res.render("pages/patientInfo", {data}); 
+})
 
 // TODO: place authentication middleware and login methods PRIOR to nurse / patient portal pages
 
