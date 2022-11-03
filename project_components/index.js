@@ -56,6 +56,44 @@ app.get('/home', (req, res) => {
     res.render("pages/home");
   });
 
+app.get('/patientInfo', (req, res)=> {
+  //TODO: add database call
+  const data = {
+    name: "John Snow",
+    dob: "01/01/2000",
+    visits: [
+      {
+        nurse: "Jan Smith",
+        date: "11/01/2022",
+        time: "Morning",
+        notes: "Seemed happy, took medication. Discussed how their weekend went."
+      },
+      {
+        nurse: "Jan Smith",
+        date: "11/01/2022",
+        time: "Evening",
+        notes: "Consistent mood with morning, but noticably fatigued. Night medication was taken."
+      }
+    ],
+    medication: [
+      {
+        name: "Scary Drug Name",
+        dose: "30mg",
+        frequency: "Twice Daily",
+      },
+      {
+        name: "Youth Serum",
+        dose: "5000mg",
+        frequency: "Once in morning",
+      },
+      {
+        name: "Happy pills",
+        dose: "20mg",
+        frequency: "As needed"
+      }
+    ]
+  }
+  res.render("pages/patientInfo", {data}); 
 
 // TODO: place authentication middleware and login methods PRIOR to nurse / patient portal pages
 

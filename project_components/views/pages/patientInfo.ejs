@@ -1,0 +1,91 @@
+<%- include("../partials/header") %>
+<%- include("../partials/menu") %>
+
+<main>
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <!--Patient info-->
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Patient Info</h5>
+            <h6 style="color:gray"><%= data.name %></h6>
+            <table>
+              <tbody>
+                <tr>
+                  <th>Date of Birth</th>
+                  <td><%= data.dob %></td>
+                </tr>
+                <tr>
+                  <th>Visits</th>
+                  <td><%= data.visits.length %></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+         <!--Patient Medication-->
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Medication</h5>
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Dose</th>
+                  <th>Frequency</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% data.medication.forEach( (med)=>{ %>
+                  <tr>
+                    <td><%= med.name %></td>
+                    <td><%= med.dose %></td>
+                    <td><%= med.frequency %></td>
+                  </tr>  
+                <% }) %> 
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!--Patient Nurse Visits-->
+      <div class="col">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Nurse Visits</h5>
+            <table>
+              <thead>
+                <tr>
+                  <th>Nurse</th>
+                  <th>Date</th>
+                  <th>Time</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+             <tbody>
+                <% data.visits.forEach( (visit)=>{ %>
+                  <tr>
+                    <td><%= visit.nurse %></td>
+                    <td><%= visit.date %></td>
+                    <td><%= visit.time %></td>
+                    <td><%= visit.notes %></td>
+                  </tr>  
+                <% }) %> 
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+
+  </div>
+</main>
+
+<%- include("../partials/footer") %>
