@@ -15,3 +15,20 @@
 - Finish github project board
 - Assign priority to each task (features)
 - Have initial demo of MVP prepared for next week
+
+
+
+### 11/7 TA Meeting Minutes
+
+#### Since last meeting:
+- Finished UI for all pages (see project board [here](https://github.com/users/jackmckinstry/projects/2/views/1) )
+- Release notes v0.0.1 [here](https://github.com/jackmckinstry/homecare-project/releases/tag/v0.0.1)
+
+#### In meeting:
+- Need to finish week 2 plan (will be issue on github project board)
+- Will assign tasks to each person for completion of working features
+- Will use dbdiagram.io in order to make our database diagram
+
+#### Planning for next meeting:
+- Finish database structure
+- Incorporate features w node: (login, registration, database, nurse page, patient page)
