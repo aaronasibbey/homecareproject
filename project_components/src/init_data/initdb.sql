@@ -1,10 +1,15 @@
 CREATE TYPE perms AS ENUM ('family', 'nurse', 'super');
 CREATE TABLE IF NOT EXISTS users(
   id SERIAL PRIMARY KEY,
-  username VARCHAR(30) NOT NULL,
+  username VARCHAR(50) NOT NULL,
   --Password size is based on the bcrypt output. I forget how big it is but it's smaller than 100
   password VARCHAR(100) NOT NULL,
-  permission_level perms NOT NULL DEFAULT 'family'
+  --Name is the legal name of nurse or patient (whereas username is for login, likely email).
+  name VARCHAR(100) NOT NULL,
+  permission_level perms NOT NULL DEFAULT 'family',
+  --DOB and patient_needs will only be input for patients, null for nurses
+  dob TIMESTAMP,
+  patient_needs VARCHAR(1000)
 );
 --Not sure if we need this table. 
 CREATE TABLE IF NOT EXISTS patient_to_nurse(
