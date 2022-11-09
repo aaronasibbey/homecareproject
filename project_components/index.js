@@ -109,12 +109,85 @@ app.get('/patientInfo', (req, res)=> {
   res.render("pages/patientInfo", {data}); 
 })
 
+// global variable for the nurse's currently selected patient
+let currentPatientID = -1;
+
 app.get('/nurse', (req, res) => {
-  res.render("pages/nurse");
+  // TODO: require nurse perm level for viewing this page, else send a message that user has no access
+
+  // const query = "select * from users";
+  // db.one(query)
+  //   .then((data) => {
+  //     console.log(data);
+  //   })
+  //   .catch((err) => {
+  //     console.log(err);
+  //   });
+  // TODO: database call to get info prior to render
+  
+  if (currentPatientID === -1) {
+    currentPatientID = 1; 
+    // TODO: this should default to the nurse's lowest patient id from db query call
+  }
+
+  // TODO load data for the patient with query based on currentPatientID field
+  const data = {
+    selected_id: `${currentPatientID}`,
+    nurse_patients: [
+      {
+        patient_id: "1",
+        patient_name: "John Snow"
+      },
+      {
+        patient_id: "2",
+        patient_name: "Jane Doe"
+      }   
+    ],
+    patient_name: "John Snow",
+    dob: "2012-04-23T18:25:43.511Z",
+    patient_needs: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    visits: [
+      {
+        nurse: "Jan Smith",
+        date: "11/01/2022",
+        time: "Morning",
+        notes: "Seemed happy, took medication. Discussed how their weekend went."
+      },
+      {
+        nurse: "Jan Smith",
+        date: "11/01/2022",
+        time: "Evening",
+        notes: "Consistent mood with morning, but noticably fatigued. Night medication was taken."
+      }
+    ],
+    medication: [
+      {
+        name: "Scary Drug Name",
+        dose: "30mg",
+        frequency: "Twice Daily",
+      },
+      {
+        name: "Youth Serum",
+        dose: "5000mg",
+        frequency: "Once in morning",
+      },
+      {
+        name: "Happy pills",
+        dose: "20mg",
+        frequency: "As needed"
+      }
+    ]
+  }
+
+  res.render("pages/nurse", {data});
 });
 
 app.post('/selectpatient', (req,res) => {
-  // TODO, for nurse patient update form
+  let select_id = parseInt(req.body.selected_patient);
+  console.log("Selected patient ID:");
+  console.log(select_id);
+  currentPatientID = select_id;
+  res.redirect("/nurse");
 });
 
 app.post('/patientupdate', (req,res) => {
