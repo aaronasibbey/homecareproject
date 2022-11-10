@@ -65,7 +65,9 @@ app.get('/login', (req, res) => {
 app.get('/register', (req, res) => {
     res.render("pages/register");
   });
-
+app.get('/logout', (req, res) => {
+    res.render("pages/logout")
+});
 
 // TODO: place authentication middleware and login methods PRIOR to nurse / patient portal pages
 
