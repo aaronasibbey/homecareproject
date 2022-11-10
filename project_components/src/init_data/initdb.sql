@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS users(
   --Password size is based on the bcrypt output. I forget how big it is but it's smaller than 100
   password VARCHAR(100) NOT NULL,
   --Name is the legal name of nurse or patient (whereas username is for login, likely email).
-  name VARCHAR(100) NOT NULL,
+  legal_name VARCHAR(100) NOT NULL,
   permission_level perms NOT NULL DEFAULT 'family',
   --DOB and patient_needs will only be input for patients, null for nurses
   dob TIMESTAMP,
@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS visit(
 );
 CREATE TABLE IF NOT EXISTS medication(
   patient_id SERIAL REFERENCES users(id),
-  name VARCHAR(60) NOT NULL,
+  medication_name VARCHAR(60) NOT NULL,
   dosage VARCHAR(30) NOT NULL,
   frequency VARCHAR(60) NOT NULL
 );
