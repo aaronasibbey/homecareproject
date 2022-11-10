@@ -3,19 +3,17 @@
 
 <main>
   <body>
-    <!-- TODO: remove selected id from view -->
-    <h1><%- data.selected_id %></h1>
     <div class="container">
       <br/>
       <h3>Select a patient:</h3>
       <form action="/selectpatient" method="POST">
         <select id="selected_patient" name="selected_patient" class="form-control form-control-lg">
-          <% data.nurse_patients.forEach(el => { %>
+          <% allPatients.forEach(el => { %>
             <% var isSelected = ""; %>
-            <% if (data.selected_id == el.patient_id) { %>
+            <% if (currPatient[0].id == el.id) { %>
               <% isSelected = "selected"; %>
             <% } %>
-            <option value="<%= el.patient_id %>" <%= isSelected %>><%- el.patient_name %></option>
+            <option value="<%= el.id %>" <%= isSelected %>> <%- el.legal_name %></option>
           <% }) %>
         </select>
         <br/>
@@ -24,25 +22,25 @@
       <div class="row">
         <div class="col-sm">
           <br/>
-          <h3><%- data.patient_name %></h3>
+          <h3><%- currPatient[0].legal_name %></h3>
           <br/>
           <table class="table">
             <tbody>
               <tr>
                 <th scope="row">Age:</th>
-                <% var diff = Math.floor(Math.abs(new Date() - Date.parse(data.dob)) / 31536000000); %>
+                <% var diff = Math.floor(Math.abs(new Date() - Date.parse(currPatient[0].dob)) / 31536000000); %>
                 <td><%- diff %></td>
               </tr>
               <tr>
                 <th scope="row">Schedule:</th>
-                <td>Monday - Wednesday <br/> 8 AM - 12 PM</td>
+                <td>Monday - Wednesday <br/> 8 AM - 12 PM</td> <!-- TODO -->
               </tr>
               <tr>
                 <th scope="row">Medicine Needed:</th>
                 <td>
-                  <% data.medication.forEach(el => { %>
-                    <%- el.name %>,
-                    <%- el.dose %>,
+                  <% medications.forEach(el => { %>
+                    <%- el.medication_name %>,
+                    <%- el.dosage %>,
                     <%- el.frequency %>
                     <br/><br/>
                   <% }) %>
@@ -50,7 +48,7 @@
               </tr>
               <tr>
                 <th scope="row">Notes:</th>
-                <td><%- data.patient_needs %></td>
+                <td><%- currPatient[0].patient_needs %></td>
               </tr>
             </tbody>
           </table>
@@ -59,7 +57,7 @@
           <div class="container">
             <br/>
             <h3>Patient Update</h3>
-            <h6>Provide an update on how <%- data.patient_name %> is doing for their family.</h6>
+            <h6>Provide an update on how <%- currPatient[0].legal_name %> is doing for their family.</h6>
             <br/>
             <form action="/patientupdate" method="POST">
                 <div class="mb-3">
@@ -74,9 +72,8 @@
             </form>
             <br/>
             <h4>Past updates:</h4>
-            <% data.visits.forEach(el => { %>
+            <% visits.forEach(el => { %>
               <%- el.date %> <br/>
-              <%- el.time %> <br/>
               <%- el.notes %>
               <br/><br/>
             <% }) %>
