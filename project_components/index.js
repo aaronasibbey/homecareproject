@@ -109,14 +109,113 @@ app.get('/patientInfo', (req, res)=> {
   res.render("pages/patientInfo", {data}); 
 })
 
+// global variable for the nurse's currently selected patient
+let nurseLoggedInID = 1; // TODO temp, remove or update based on login
+let currentPatientID = -1;
+
 app.get('/nurse', (req, res) => {
-  res.render("pages/nurse");
+  // TODO: require nurse perm level for viewing this page, else send a message that user has no access
+
+  const patientsQuery = `SELECT id, legal_name FROM users 
+    JOIN patient_to_nurse ON users.id = patient_to_nurse.patient_id
+    WHERE patient_to_nurse.nurse_id = ${nurseLoggedInID};`;
+
+    // this should not be multiple nested queries, it should use async and await and tasks
+    // while this is bad practice, it works (for now).
+  db.any(patientsQuery)
+    .then((allPatients) => {
+      // to get info for all patients of the nurse
+      
+      if (currentPatientID === -1) {
+        currentPatientID = allPatients[0].id;
+        // this should default to the nurse's lowest patient id from the db query call
+      }
+
+      console.log("allPatients:");
+      console.log(allPatients);
+      // all patients
+      console.log("Current patient ID:");
+      console.log(currentPatientID);
+
+      // THEN queryB to get info for current patient
+      const currPatientQuery = `
+        SELECT * FROM users
+        WHERE users.id = ${currentPatientID};`;
+      const medicationsQuery = `
+        SELECT medication.* FROM users
+        JOIN patient_to_medication ON users.id = patient_to_medication.patient_id
+        JOIN medication ON patient_to_medication.medication_id = medication.medication_id
+        WHERE users.id = ${currentPatientID};`;
+      const visitsQuery = `
+        SELECT visit.* FROM users
+        JOIN patient_to_visit ON users.id = patient_to_visit.patient_id
+        JOIN visit ON patient_to_visit.visit_id = visit.visit_id
+        WHERE users.id = ${currentPatientID}
+        ORDER BY visit.visit_id DESC;`;
+      db.any(currPatientQuery)
+        .then((currPatient) => {
+          console.log("Curr Patient:");
+          console.log(currPatient);
+          
+          db.any(medicationsQuery)
+            .then((medications) => {
+              console.log("Medications:");
+              console.log(medications);
+              
+              db.any(visitsQuery)
+                .then((visits) => {
+                  console.log("Visits:");
+                  console.log(visits);
+                  
+                  res.render("pages/nurse", {allPatients, currPatient, medications, visits});
+                })
+                .catch((err) => {
+                  console.log(err);
+                });
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 });
 
+
 app.post('/selectpatient', (req,res) => {
-  // TODO, for nurse patient update form
+  let select_id = parseInt(req.body.selected_patient);
+  console.log("Selected patient ID:");
+  console.log(select_id);
+  currentPatientID = select_id;
+  res.redirect("/nurse");
 });
 
 app.post('/patientupdate', (req,res) => {
-  // TODO, for nurse patient update form
+  var updateIn = req.body.updateInput;
+  var currentTime = new Date();
+  var currentTimeFormatted = currentTime.toISOString();
+  var query = `
+  INSERT INTO visit(nurse_id, notes, date)
+  VALUES (${nurseLoggedInID}, '${updateIn}', '${currentTimeFormatted}');
+  
+  INSERT INTO patient_to_visit(patient_id, visit_id)
+  VALUES (
+      ${currentPatientID}, 
+      (SELECT visit.visit_id FROM visit ORDER BY visit.visit_id DESC LIMIT 1) 
+    );`;
+  db.any(query)
+    .then(function (rows) {
+      // TODO send message saying update has been posted
+      console.log("Patient update posted");
+      console.log(`${updateIn}`);
+      res.redirect("/nurse");
+    })
+    .catch(function (error) {
+      res.send({'message' : error});
+    });
 });
