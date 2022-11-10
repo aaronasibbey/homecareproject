@@ -16,20 +16,32 @@ CREATE TABLE IF NOT EXISTS patient_to_nurse(
   patient_id SERIAL REFERENCES users(id),
   nurse_id SERIAL REFERENCES users(id)
 );
+
 --Serial doesn't allow null in case anyone wondered
 CREATE TABLE IF NOT EXISTS visit(
   id SERIAL PRIMARY KEY,
   nurse_id SERIAL REFERENCES users(id),
-  patient_id SERIAL REFERENCES users(id),
   notes VARCHAR(1000),
   date TIMESTAMP NOT NULL
 );
-CREATE TABLE IF NOT EXISTS medication(
+
+CREATE TABLE IF NOT EXISTS patient_to_visit(
   patient_id SERIAL REFERENCES users(id),
+  visit_id SERIAL REFERENCES visit(id)
+);
+
+CREATE TABLE IF NOT EXISTS medication(
+  id SERIAL PRIMARY KEY,
   medication_name VARCHAR(60) NOT NULL,
   dosage VARCHAR(30) NOT NULL,
   frequency VARCHAR(60) NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS patient_to_medication(
+  patient_id SERIAL REFERENCES users(id),
+  medication_id SERIAL REFERENCES medication(id)
+);
+
 CREATE TABLE IF NOT EXISTS availability(
   user_id SERIAL REFERENCES users(id),
   start_date TIMESTAMP NOT NULL,
