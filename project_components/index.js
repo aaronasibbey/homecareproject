@@ -29,7 +29,7 @@ db.connect()
 
 app.set('view engine', 'ejs');
 
-app.use( '/resources', express.static( 'img' ) );
+app.use(express.static( 'public' ) );
 
 app.use(bodyParser.json());
 
