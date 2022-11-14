@@ -32,3 +32,20 @@
 #### Planning for next meeting:
 - Finish database structure
 - Incorporate features w node: (login, registration, database, nurse page, patient page)
+
+
+
+### 11/14 TA Meeting Minutes
+
+#### Since last meeting:
+- Finished database structure and other items in week 2 plan (see project board [here](https://github.com/users/jackmckinstry/projects/2/views/1) )
+- Release notes v0.0.2 [here](https://github.com/jackmckinstry/homecare-project/releases/tag/v0.0.2)
+
+#### In meeting:
+- Went through all items on week 2 plan and what was completed by each person
+- Planning to finish authentication + sessions and superuser functionality as our last critical items
+- Showed working demo with database incorporation
+
+#### Planning for next meeting:
+- Finish week 3 plan and action items
+- Sign up for a presentation slot
