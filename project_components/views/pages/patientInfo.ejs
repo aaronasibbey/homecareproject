@@ -9,16 +9,16 @@
         <div class="card">
           <div class="card-body">
             <h5 class="card-title">Patient Info</h5>
-            <h6 style="color:gray"><%= data.name %></h6>
+            <h6 style="color:gray"><%= name %></h6>
             <table>
               <tbody>
                 <tr>
                   <th>Date of Birth</th>
-                  <td><%= data.dob %></td>
+                  <td><%= dob %></td>
                 </tr>
                 <tr>
                   <th>Visits</th>
-                  <td><%= data.visits.length %></td>
+                  <td><%= visits.length %></td>
                 </tr>
               </tbody>
             </table>
@@ -39,7 +39,7 @@
                 </tr>
               </thead>
               <tbody>
-                <% data.medication.forEach( (med)=>{ %>
+                <% medication.forEach( (med)=>{ %>
                   <tr>
                     <td><%= med.name %></td>
                     <td><%= med.dose %></td>
@@ -67,7 +67,7 @@
                 </tr>
               </thead>
              <tbody>
-                <% data.visits.forEach( (visit)=>{ %>
+                <% visits.forEach( (visit)=>{ %>
                   <tr>
                     <td><%= visit.nurse %></td>
                     <td><%= visit.date %></td>

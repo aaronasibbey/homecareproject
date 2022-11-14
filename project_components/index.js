@@ -72,7 +72,8 @@ app.get('/logout', (req, res) => {
 // TODO: place authentication middleware and login methods PRIOR to nurse / patient portal pages
 
 app.get('/patientInfo', (req, res)=> {
-  //TODO: add database call
+  const userid = 2;
+  /*
   const data = {
     name: "John Snow",
     dob: "01/01/2000",
@@ -107,8 +108,37 @@ app.get('/patientInfo', (req, res)=> {
         frequency: "As needed"
       }
     ]
-  }
-  res.render("pages/patientInfo", {data}); 
+  }*/
+  
+
+  const patientInfoQuery = `SELECT D.id, D.legal_name AS name, D.dob, to_json(T.visits) AS visits, to_json(U.medication) AS medication
+  FROM
+  (SELECT A.id, json_agg(
+  json_build_object(
+    'nurse', H.legal_name,
+    'date', C.date,
+    'notes', C.notes
+  )
+) AS visits
+FROM users AS A LEFT JOIN patient_to_visit AS B ON A.id = B.patient_id
+LEFT JOIN visit AS C ON B.visit_id = C.visit_id
+LEFT JOIN users AS H ON H.id = C.nurse_id
+GROUP BY A.id) AS T 
+  LEFT JOIN users AS D ON T.id = D.id
+  LEFT JOIN (SELECT G.id, json_agg(
+  json_build_object(
+    'name', E.medication_name,
+    'dose', E.dosage,
+    'frequency', E.frequency
+  )
+) AS medication FROM medication AS E LEFT JOIN patient_to_medication AS F ON E.medication_id = F.medication_id
+                       LEFT JOIN users AS G ON G.id = F.patient_id
+                       GROUP BY G.id) AS U ON D.id = U.id
+  WHERE D.id = ${userid};`
+
+  db.any(patientInfoQuery).then((data) => {
+    res.render("pages/patientInfo", data[0]); 
+  })
 })
 
 // global variable for the nurse's currently selected patient
