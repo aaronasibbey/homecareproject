@@ -251,3 +251,58 @@ app.post('/patientupdate', (req,res) => {
       res.send({'message' : error});
     });
 });
+
+app.get('/login', (req, res) =>{
+  res.render('pages/login'); 
+});
+app.get('/register', (req, res) => {
+  res.render('pages/register');
+});
+app.post('/register', async (req, res) => {
+  const hash = await bcrypt.hash(req.body.password, 10);
+  let query ="INSERT INTO users(username, password) VALUES($1,$2)";
+  db.any(query, [req.body.username, hash])
+  .then(()=> {
+    res.redirect('/login')
+  })
+  .catch(function (err) {
+  console.log(err);
+    res.redirect('/register')
+  });
+});
+app.get('/', (req, res) => {
+  res.redirect('/login');
+});
+app.post('/login', async (req, res) => {
+console.log(req.body.username)
+const query = "select * from users where username = $1";
+  db.any(query, [req.body.username])
+  .then(async (data) => {
+    console.log(data)
+    if (data.length  === 0) {
+      return res.redirect('/login')
+    }
+    console.log(data)
+    const match = await bcrypt.compare(req.body.password, data[0].password);
+    if(!match){
+      return res.redirect('/register')
+    } else {
+      req.session.user = {
+        api_key: process.env.API_KEY,
+      };
+      req.session.save();
+      res.redirect('/home')
+    }
+  })
+  .catch(e => {
+    console.log(e);
+    res.redirect('/register')  
+  })
+});
+const auth = (req, res, next) => {
+  if (!req.session.user) {
+    return res.redirect('/register');
+  }
+  next();
+};
+app.use(auth);
