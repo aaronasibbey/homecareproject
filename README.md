@@ -1,16 +1,26 @@
 # homecare-project
 
-TODO:
+Our Application, 'HomeCare' is an interactive app to pair privately practicing nurses with patients in need of care at their own homes.  This app has a login feature which seperates the viewers of patient documents from the nurses, which enables permissions that are not given to other nurses.
 
-Brief Application description
+Contributors:
+Jack McKinstry
+Aaron Asibbey
+Nick Henley
+David Ustyan
+Nate Weaver
 
-Contributors - In this case, it will be the team Members
+Technology used:
+PostgreSQL
+Ejs
+CSS
+JavaScript
 
-Technology Stack used for the project
+Prerequisites to run the application:
+Docker(running npm)
 
-Prerequisites to run the application - Any software that needs to be installed to run the application
-
-Instructions on how to run the application locally.
+Instructions on how to run the application locally:
+docker-compose run npm install
+localhost:3000
 
 How to run the tests, if applicable
 
