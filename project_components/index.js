@@ -309,4 +309,11 @@ const auth = (req, res, next) => {
   }
   next();
 };
+
 app.use(auth);
+
+app.get('/logout',(req,res)=>{
+  req.session.destroy(function (err) {
+    res.redirect('/');
+   });
+});
