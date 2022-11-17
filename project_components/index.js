@@ -73,78 +73,6 @@ app.get('/superuser', (req, res) => {
   res.render("pages/superuser")
 });
 
-// TODO: place authentication middleware and login methods PRIOR to nurse / patient portal pages
-
-app.get('/patientInfo', (req, res)=> {
-  const userid = 2;
-  /*
-  const data = {
-    name: "John Snow",
-    dob: "01/01/2000",
-    visits: [
-      {
-        nurse: "Jan Smith",
-        date: "11/01/2022",
-        time: "Morning",
-        notes: "Seemed happy, took medication. Discussed how their weekend went."
-      },
-      {
-        nurse: "Jan Smith",
-        date: "11/01/2022",
-        time: "Evening",
-        notes: "Consistent mood with morning, but noticably fatigued. Night medication was taken."
-      }
-    ],
-    medication: [
-      {
-        name: "Scary Drug Name",
-        dose: "30mg",
-        frequency: "Twice Daily",
-      },
-      {
-        name: "Youth Serum",
-        dose: "5000mg",
-        frequency: "Once in morning",
-      },
-      {
-        name: "Happy pills",
-        dose: "20mg",
-        frequency: "As needed"
-      }
-    ]
-  }*/
-  
-
-  const patientInfoQuery = `SELECT D.id, D.legal_name AS name, D.dob, to_json(T.visits) AS visits, to_json(U.medication) AS medication
-  FROM
-  (SELECT A.id, json_agg(
-  json_build_object(
-    'nurse', H.legal_name,
-    'date', C.date,
-    'notes', C.notes
-  )
-) AS visits
-FROM users AS A LEFT JOIN patient_to_visit AS B ON A.id = B.patient_id
-LEFT JOIN visit AS C ON B.visit_id = C.visit_id
-LEFT JOIN users AS H ON H.id = C.nurse_id
-GROUP BY A.id) AS T 
-  LEFT JOIN users AS D ON T.id = D.id
-  LEFT JOIN (SELECT G.id, json_agg(
-  json_build_object(
-    'name', E.medication_name,
-    'dose', E.dosage,
-    'frequency', E.frequency
-  )
-) AS medication FROM medication AS E LEFT JOIN patient_to_medication AS F ON E.medication_id = F.medication_id
-                       LEFT JOIN users AS G ON G.id = F.patient_id
-                       GROUP BY G.id) AS U ON D.id = U.id
-  WHERE D.id = ${req.session.user.user_id};`
-
-  db.any(patientInfoQuery).then((data) => {
-    res.render("pages/patientInfo", data[0]); 
-  })
-})
-
 // global variable for the nurse's currently selected patient
 let nurseLoggedInID = 1; // TODO temp, remove or update based on login
 let currentPatientID = -1;
@@ -259,9 +187,11 @@ app.post('/patientupdate', (req,res) => {
 app.get('/login', (req, res) =>{
   res.render('pages/login'); 
 });
+
 app.get('/register', (req, res) => {
   res.render('pages/register');
 });
+
 app.post('/register', async (req, res) => {
   const hash = await bcrypt.hash(req.body.password, 10);
   let query ="INSERT INTO users(username, password, permission_level, dob, patient_needs, legal_name) VALUES($1,$2, $3, $4, $5, $6)";
@@ -274,9 +204,11 @@ app.post('/register', async (req, res) => {
     res.redirect('/register')
   });
 });
+
 app.get('/', (req, res) => {
   res.redirect('/login');
 });
+
 app.post('/login', async (req, res) => {
 console.log(req.body.username)
 const query = "select * from users where username = $1";
@@ -304,6 +236,8 @@ const query = "select * from users where username = $1";
     res.redirect('/register')  
   })
 });
+
+
 const auth = (req, res, next) => {
   if (!req.session.user) {
     return res.redirect('/register');
@@ -318,3 +252,35 @@ app.get('/logout',(req,res)=>{
     res.redirect('/');
    });
 });
+
+app.get('/patientInfo', (req, res)=> {
+  const userid = 2;
+  const patientInfoQuery = `SELECT D.id, D.legal_name AS name, D.dob, to_json(T.visits) AS visits, to_json(U.medication) AS medication
+  FROM
+  (SELECT A.id, json_agg(
+  json_build_object(
+    'nurse', H.legal_name,
+    'date', C.date,
+    'notes', C.notes
+  )
+) AS visits
+FROM users AS A LEFT JOIN patient_to_visit AS B ON A.id = B.patient_id
+LEFT JOIN visit AS C ON B.visit_id = C.visit_id
+LEFT JOIN users AS H ON H.id = C.nurse_id
+GROUP BY A.id) AS T 
+  LEFT JOIN users AS D ON T.id = D.id
+  LEFT JOIN (SELECT G.id, json_agg(
+  json_build_object(
+    'name', E.medication_name,
+    'dose', E.dosage,
+    'frequency', E.frequency
+  )
+) AS medication FROM medication AS E LEFT JOIN patient_to_medication AS F ON E.medication_id = F.medication_id
+                       LEFT JOIN users AS G ON G.id = F.patient_id
+                       GROUP BY G.id) AS U ON D.id = U.id
+  WHERE D.id = ${req.session.user.user_id};`
+
+  db.any(patientInfoQuery).then((data) => {
+    res.render("pages/patientInfo", data[0]); 
+  })
+})
