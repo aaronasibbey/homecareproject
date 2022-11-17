@@ -78,7 +78,12 @@ let nurseLoggedInID = 1; // TODO temp, remove or update based on login
 let currentPatientID = -1;
 
 app.get('/nurse', (req, res) => {
-  // TODO: require nurse or super perm level for viewing this page, else send a message that user has no access
+  // require nurse or super perm level for viewing this page, else send a message that user has no access
+  if (req.session.user.permission_level === "family") {
+    return res.redirect("/home");
+  }
+
+  // TODO changed nurseLoggedInID to be req.session.user.user_id and remove nurseloggedinid
   let patientsQuery = `SELECT id, legal_name FROM users 
     JOIN patient_to_nurse ON users.id = patient_to_nurse.patient_id
     WHERE patient_to_nurse.nurse_id = ${nurseLoggedInID};`;
