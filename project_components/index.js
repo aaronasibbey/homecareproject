@@ -78,11 +78,16 @@ let nurseLoggedInID = 1; // TODO temp, remove or update based on login
 let currentPatientID = -1;
 
 app.get('/nurse', (req, res) => {
-  // TODO: require nurse perm level for viewing this page, else send a message that user has no access
-
-  const patientsQuery = `SELECT id, legal_name FROM users 
+  // TODO: require nurse or super perm level for viewing this page, else send a message that user has no access
+  let patientsQuery = `SELECT id, legal_name FROM users 
     JOIN patient_to_nurse ON users.id = patient_to_nurse.patient_id
     WHERE patient_to_nurse.nurse_id = ${nurseLoggedInID};`;
+  
+  if (req.session.user.permission_level === "super") {
+    // if the superuser is viewing the nurse portal, they should be able to see all users
+    patientsQuery = `SELECT id, legal_name FROM users 
+    WHERE users.permission_level = 'family';`;
+  }
 
     // this should not be multiple nested queries, it should use async and await and tasks
     // while this is bad practice, it works (for now).
