@@ -1,0 +1,30 @@
+<% include ../partials/header %>
+<% include ../partials/menu %>
+
+<main>
+    <body>
+        <div class="container">
+            <h3>Assign a patient to a nurse:</h3>
+            <br/>
+            <form action="/assign" method="POST">
+                <h4>Select a patient:</h4>
+                <select id="selected_patient" name="selected_patient" class="form-control form-control-lg">
+                    <% patientsList.forEach(el => { %>
+                        <option value="<%= el.id %>"> <%- el.legal_name %></option>
+                    <% }) %>
+                </select>
+                <br/>
+                <h4>Select a nurse:</h4>
+                <select id="selected_nurse" name="selected_nurse" class="form-control form-control-lg">
+                    <% nursesList.forEach(el => { %>
+                        <option value="<%= el.id %>"> <%- el.legal_name %></option>
+                    <% }) %>
+                </select>
+                <br/>
+                <button id="assignPatient" class="btn btn-primary" type="submit">Assign Nurse to Patient</button>
+            </form>
+        </div>
+    </body>
+</main>
+
+<% include ../partials/footer %>

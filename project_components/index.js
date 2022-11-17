@@ -205,8 +205,45 @@ app.post('/register', async (req, res) => {
   });
 });
 
-app.get('/', (req, res) => {
-  res.redirect('/login');
+app.get('/assign', (req, res) =>{
+  // todo require superuser permissions to view this page
+  const pQuery = `SELECT id, legal_name FROM users 
+    WHERE users.permission_level = 'family';`;
+
+  db.any(pQuery)
+    .then((patientsList) => {
+      const nQuery = `SELECT id, legal_name FROM users 
+      WHERE users.permission_level = 'nurse';`;
+      
+      db.any(nQuery)
+        .then((nursesList) => {
+          res.render("pages/assign", {patientsList, nursesList});
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+app.post('/assign', (req,res) => {
+  let selected_pat = parseInt(req.body.selected_patient);
+  let selected_nurse = parseInt(req.body.selected_nurse);;
+
+  var query = `
+  INSERT INTO patient_to_nurse(patient_id, nurse_id)
+  VALUES (${selected_pat}, ${selected_nurse});`;
+  
+  db.any(query)
+    .then(function (rows) {
+      console.log(`assigned patient ${selected_pat} to nurse ${selected_nurse}`);
+      res.redirect("/superuser");    
+    })
+    .catch(function (error) {
+      res.send({'message' : error});
+    });
 });
 
 app.post('/login', async (req, res) => {
