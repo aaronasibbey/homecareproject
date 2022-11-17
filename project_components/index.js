@@ -264,8 +264,8 @@ app.get('/register', (req, res) => {
 });
 app.post('/register', async (req, res) => {
   const hash = await bcrypt.hash(req.body.password, 10);
-  let query ="INSERT INTO users(username, password) VALUES($1,$2)";
-  db.any(query, [req.body.username, hash])
+  let query ="INSERT INTO users(username, password, permission_level, dob, patient_needs, legal_name) VALUES($1,$2, $3, $4, $5, $6)";
+  db.any(query, [req.body.username, hash, req.body.permission_level, req.body.dob, req.body.patient_needs, req.body.legal_name])
   .then(()=> {
     res.redirect('/login')
   })
@@ -310,4 +310,11 @@ const auth = (req, res, next) => {
   }
   next();
 };
+
 app.use(auth);
+
+app.get('/logout',(req,res)=>{
+  req.session.destroy(function (err) {
+    res.redirect('/');
+   });
+});
