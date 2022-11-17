@@ -141,7 +141,7 @@ GROUP BY A.id) AS T
   WHERE D.id = ${req.session.user.user_id};`
 
   db.any(patientInfoQuery).then((data) => {
-    res.render("pages/patientInfo", data[0]); 
+    res.render("pages/patientInfo", data[0], req.session.user); 
   })
 })
 

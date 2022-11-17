@@ -5,16 +5,16 @@
         <li class="nav-item active">
           <a class="nav-link" href="/home">Home</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/login">Login</a>
-        </li>
-        <li class="nav-item">
+          <li class="nav-item"> // should be gone if logged in
+            <a class="nav-link" href="/login">Login</a>
+          </li>
+        <li class="nav-item"> // if not logged in
           <a class="nav-link" href="/patientinfo">Patient Portal</a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item">// if not logged in
           <a class="nav-link" href="/nurse">Nurse Portal</a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item"> // if logged in
           <a class="nav-link" href="/logout">Logout</a>
         </li>
       </li>
