@@ -6,6 +6,8 @@ const session = require('express-session');
 const bcrypt = require('bcrypt');
 const axios = require('axios');
 
+const addusers = require('./addUsers').addusers;
+
 // database configuration
 const dbConfig = {
     host: 'db',
@@ -26,6 +28,8 @@ db.connect()
 .catch(error => {
     console.log('ERROR:', error.message || error);
 });
+
+addusers(db);
 
 app.set('view engine', 'ejs');
 
