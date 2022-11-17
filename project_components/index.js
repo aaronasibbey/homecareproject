@@ -69,6 +69,10 @@ app.get('/logout', (req, res) => {
     res.render("pages/logout")
 });
 
+app.get('/superuser', (req, res) => {
+  res.render("pages/superuser")
+});
+
 // TODO: place authentication middleware and login methods PRIOR to nurse / patient portal pages
 
 app.get('/patientInfo', (req, res)=> {
