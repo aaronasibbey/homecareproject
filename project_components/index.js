@@ -138,7 +138,7 @@ GROUP BY A.id) AS T
 ) AS medication FROM medication AS E LEFT JOIN patient_to_medication AS F ON E.medication_id = F.medication_id
                        LEFT JOIN users AS G ON G.id = F.patient_id
                        GROUP BY G.id) AS U ON D.id = U.id
-  WHERE D.id = ${userid};`
+  WHERE D.id = ${req.session.user.user_id};`
 
   db.any(patientInfoQuery).then((data) => {
     res.render("pages/patientInfo", data[0]); 
@@ -270,7 +270,7 @@ app.post('/register', async (req, res) => {
     res.redirect('/login')
   })
   .catch(function (err) {
-  console.log(err);
+    console.log(err);
     res.redirect('/register')
   });
 });
@@ -292,10 +292,11 @@ const query = "select * from users where username = $1";
       return res.redirect('/register')
     } else {
       req.session.user = {
-        api_key: process.env.API_KEY,
+        user_id: data[0].id,
+        permission_level: data[0].permission_level,
       };
       req.session.save();
-      res.redirect('/home')
+      return res.redirect('/home')
     }
   })
   .catch(e => {
