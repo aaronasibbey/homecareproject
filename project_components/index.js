@@ -110,7 +110,6 @@ app.use(auth);
 
 app.get('/register', (req, res) => {
   // superuser is the one registering users, only they should be able to access this page
-
   if (!req.session.user.permission_level) return res.redirect("/home");
   // require superuser perm level for viewing this page
   else if (req.session.user.permission_level === "family" || req.session.user.permission_level === "nurse") {
@@ -261,26 +260,32 @@ app.post('/register', async (req, res) => {
 });
 
 app.get('/assign', (req, res) =>{
-  // todo require superuser permissions to view this page
-  const pQuery = `SELECT id, legal_name FROM users 
-    WHERE users.permission_level = 'family';`;
+  // require superuser permissions to view this page
+  if (!req.session.user.permission_level) return res.redirect("/home");
+  else if (req.session.user.permission_level === "family" || req.session.user.permission_level === "nurse") {
+    return res.redirect("/home");
+  }
+  else {
+    const pQuery = `SELECT id, legal_name FROM users 
+      WHERE users.permission_level = 'family';`;
 
-  db.any(pQuery)
-    .then((patientsList) => {
-      const nQuery = `SELECT id, legal_name FROM users 
-      WHERE users.permission_level = 'nurse';`;
-      
-      db.any(nQuery)
-        .then((nursesList) => {
-          res.render("pages/assign", {patientsList, nursesList});
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+    db.any(pQuery)
+      .then((patientsList) => {
+        const nQuery = `SELECT id, legal_name FROM users 
+        WHERE users.permission_level = 'nurse';`;
+        
+        db.any(nQuery)
+          .then((nursesList) => {
+            res.render("pages/assign", {patientsList, nursesList});
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    }
 });
 
 app.post('/assign', (req,res) => {
