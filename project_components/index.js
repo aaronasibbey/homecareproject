@@ -22,11 +22,11 @@ const db = pgp(dbConfig);
 
 // test database
 db.connect()
-.then(obj => {
+.then(async (obj) => {
     console.log('Database connection successful');
-    dropData(db);
-    addusers(db);
-    addMedications(db);
+    await dropData(db);
+    await addusers(db);
+    await addMedications(db);
     obj.done(); // success, release the connection;
 })
 .catch(error => {
