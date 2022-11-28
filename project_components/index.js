@@ -6,7 +6,8 @@ const session = require('express-session');
 const bcrypt = require('bcrypt');
 const axios = require('axios');
 
-const addusers = require('./addUsers').addusers;
+const {addusers, addMedications} = require('./addUsers');
+
 
 // database configuration
 const dbConfig = {
@@ -23,14 +24,14 @@ const db = pgp(dbConfig);
 db.connect()
 .then(obj => {
     console.log('Database connection successful');
+    addusers(db);
+    addMedications(db);
     obj.done(); // success, release the connection;
 })
 .catch(error => {
     console.log('ERROR:', error.message || error);
 });
 
-// TODO this script should only run if it hasn't been run before, otherwise we get duplicate users
-addusers(db);
 
 app.set('view engine', 'ejs');
 
@@ -381,7 +382,6 @@ app.get('/patientInfo', (req, res)=> {
     WHERE D.id = ${req.session.user.user_id};`
 
     db.any(patientInfoQuery).then((data) => {
-      console.log(data[0]);
       res.render("pages/patientInfo", data[0]); 
     })
   }
