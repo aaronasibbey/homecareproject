@@ -63,6 +63,12 @@ const patient_needs = [
   'na'
 ]
 
+const nurse_names = [
+  "Kamala Harris",
+  "Snow White",
+  "Amy Smith"
+]
+
 
 
 const addusers = async (db)=>{
@@ -75,50 +81,23 @@ const addusers = async (db)=>{
   }
 
   //Add nurses to patients
-  for(let j = 1; j <= 5; j++){
-    await db.any(`INSERT INTO patient_to_nurse 
-                  (patient_id, nurse_id) 
-                  VALUES (${j}, ${15})`);
-    await db.any(`INSERT INTO visit 
+  for(let j = 0; j < names.length - 4; j++){
+    await db.any(`
+    INSERT INTO patient_to_nurse (patient_id, nurse_id)
+    VALUES ((SELECT id FROM users WHERE legal_name='${names[j]}'), (SELECT id FROM users WHERE legal_name='${nurse_names[j % 3]}'))
+    `)
+
+    const id1 = await db.any(`INSERT INTO visit 
                   (nurse_id, notes, date) 
-                  VALUES (${15}, '${"Patient was well; up and moving. Took Medication"}', '${Math.floor(Math.random() * 12 + 1)}/${j + 1}/2022')`);
-    await db.any(`INSERT INTO visit 
+                  VALUES ((SELECT id FROM users WHERE legal_name='${nurse_names[j % 3]}'), '${"Patient was well; up and moving. Took Medication"}', '${Math.floor(Math.random() * 12 + 1)}/${Math.floor(Math.random() * 28 + 1)}/2022') RETURNING visit_id`);
+    const id2 = await db.any(`INSERT INTO visit 
                   (nurse_id, notes, date) 
-                  VALUES (${15}, '${"Patient fine but sluggish. Took medication."}', '${Math.floor(Math.random() * 12 + 1)}/${j + 1}/2022')`);
+                  VALUES ((SELECT id FROM users WHERE legal_name='${nurse_names[j % 3]}'), '${"Patient fine but sluggish. Took medication."}', '${Math.floor(Math.random() * 12 + 1)}/${Math.floor(Math.random() * 28 + 1)}/2022') RETURNING visit_id`);
     await db.any(`INSERT INTO patient_to_visit 
                   (patient_id, visit_id) 
-                  VALUES (${j}, ${j})`);
-  
+                  VALUES ((SELECT id FROM users WHERE legal_name='${names[j]}'), ${id1[0]['visit_id']}),
+                          ((SELECT id FROM users WHERE legal_name='${names[j]}'), ${id2[0]['visit_id']})`);
   }
-  for(let j = 6; j <= 10; j++){
-    await db.any(`INSERT INTO patient_to_nurse 
-    (patient_id, nurse_id) 
-    VALUES (${j}, ${16})`)
-    await db.any(`INSERT INTO visit 
-                  (nurse_id, notes, date) 
-                  VALUES (${16}, '${"Patient was well; up and moving. Took Medication"}', '${Math.floor(Math.random() * 12 + 1)}/${j + 1}/2022')`);
-    await db.any(`INSERT INTO visit 
-                  (nurse_id, notes, date) 
-                  VALUES (${16}, '${"Patient fine but sluggish. Took medication."}', '${Math.floor(Math.random() * 12 + 1)}/${j + 1}/2022')`);
-    await db.any(`INSERT INTO patient_to_visit 
-                  (patient_id, visit_id) 
-                  VALUES (${j}, ${j})`);
-  
-  }
-  for(let j = 11; j <= 14; j++){
-    await db.any(`INSERT INTO patient_to_nurse 
-    (patient_id, nurse_id) 
-    VALUES (${j}, ${17})`)
-    await db.any(`INSERT INTO visit 
-                  (nurse_id, notes, date) 
-                  VALUES (${17}, '${"Patient was well; up and moving. Took Medication"}', '${Math.floor(Math.random() * 12 + 1)}/${j + 1}/2022')`);
-    await db.any(`INSERT INTO visit 
-                  (nurse_id, notes, date) 
-                  VALUES (${17}, '${"Patient fine but sluggish. Took medication."}', '${Math.floor(Math.random() * 12 + 1)}/${j + 1}/2022')`);
-    await db.any(`INSERT INTO patient_to_visit 
-                  (patient_id, visit_id) 
-                  VALUES (${j}, ${j})`);
-    }
 }
 
 //The website I looked at to get these listed a lot of antidepressants ig
@@ -134,7 +113,7 @@ const medication_names = [
 const doses = [
   '30mg',
   '20mg',
-  '100mg',
+  '100mg',    
   '10mg',
   '5mg',
 ]
@@ -166,15 +145,18 @@ const addMedications = async (db)=>{
 
     for(let j=0; j < numMeds; j++){
       //There are 120 medication combos. Pick randomly from all 120
-      let val = Math.floor(Math.random() * 120 + 1);
+      let numMedName = Math.floor(Math.random() * 6);
+      let numMedDose = Math.floor(Math.random() * 5);
+      let numMedFreq = Math.floor(Math.random() * 4);
 
       await db.any(`INSERT INTO patient_to_medication 
                   (patient_id, medication_id) 
-                  VALUES ('${i}', '${val}');`)
+                  VALUES ((SELECT id FROM users WHERE legal_name='${names[i]}'), (SELECT medication_id FROM medication WHERE medication_name='${medication_names[numMedName]}' AND dosage='${doses[numMedDose]}' AND frequency='${frequencies[numMedFreq]}'));`)
     }
   }
 }
 
+//Need to drop data so we don't get a bunch of repeat data in the database between reboots
 const dropData = async (db)=>{
   await db.any(`DELETE FROM patient_to_visit;`)
   await db.any(`DELETE FROM patient_to_medication;`)
