@@ -35,6 +35,8 @@ A superuser administrator is able to register new nurses/patients, and make assi
 
 1. From a shell within the /project_components/ directory run: `docker-compose up` on all starts following the initial
 
-2. Navigate to `localhost:3000` in any web browser
+2. Wait for Docker to print `Database connection successful` in the shell terminal
+
+3. Navigate to `localhost:3000` in any web browser
 
 ### Link to the deployed application // TODO
