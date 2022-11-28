@@ -69,9 +69,6 @@ app.get('/login', (req, res) => {
 app.get('/register', (req, res) => {
     res.render("pages/register");
   });
-app.get('/logout', (req, res) => {
-    res.render("pages/logout")
-});
 
 app.get('/superuser', (req, res) => {
   res.render("pages/superuser")
