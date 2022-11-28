@@ -45,68 +45,12 @@ position: relative;
   <body>
     <h1>Welcome, Admin</h1>
 
-<button class="button">Add Patient</button>
-<button class="button button2">Add Nurse</button>
-<button class="button button3">Assign Nurse to Patient</button>
-<button class="button button4">View All Patients</button>
+<a class="button" role= "button" href="/register">Add Patient</a>  
+<a class="button button2" role= "button" href="/register">Add Nurse</a>
+<a class="button button3" role= "button" href="/assign">Assign Nurse to Patient</a>
+<a class="button button4"role= "button" href="/nurse">View All Patients</a>
 
-    <div class="container">
-      <br/>
-      <h3>Select a patient:</h3>
-      <form action="/selectpatient" method="POST">
-        <select class="form-control form-control-lg">
-          <option>Patient 1</option>
-          <option>Patient 2</option>
-          <option>Patient 3</option>
-        </select>
-      </form>
-      <div class="row">
-        <div class="col-sm">
-          <br/>
-          <h3>PATIENT_NAME</h3>
-          <br/>
-          <table class="table">
-            <tbody>
-              <tr>
-                <th scope="row">Age:</th>
-                <td>70</td>
-              </tr>
-              <tr>
-                <th scope="row">Schedule:</th>
-                <td>Monday - Wednesday <br/> 8 AM - 12 PM</td>
-              </tr>
-              <tr>
-                <th scope="row">Medicine Needed:</th>
-                <td>Advil</td>
-              </tr>
-              <tr>
-                <th scope="row">Notes:</th>
-                <td>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed blandit purus a efficitur tristique. Proin cursus ipsum quam, egestas scelerisque quam imperdiet at. </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="col-sm">
-          <div class="container">
-            <br/>
-            <h3>Patient Update</h3>
-            <h6>Provide an update on how PATIENT_NAME is doing for their family.</h6>
-            <br/>
-            <form action="/patientupdate" method="POST">
-                <div class="mb-3">
-                    <label for="updateInput" class="form-label">Update:</label>
-                    <textarea type="text" class="form-control" 
-                      id="updateInput" 
-                      name="updateInput" 
-                      rows="6"
-                      required></textarea>
-                </div>
-                <button id="submitButton" class="btn btn-primary" type="submit">Post Update</button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>    
+   
   </body>
 </main>
 
