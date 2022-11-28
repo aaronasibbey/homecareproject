@@ -19,7 +19,11 @@
                 </tr>
                 <tr>
                   <th>Visits</th>
+                  <% if (visits[0].nurse != null) { %>
                   <td><%= visits.length %></td>
+                  <% } else { %>
+                    <td><%= 0 %></td>
+                  <% } %>
                 </tr>
               </tbody>
             </table>
@@ -69,14 +73,18 @@
                 </tr>
               </thead>
              <tbody>
-                <% visits.forEach( (visit)=>{ %>
-                  <tr>
-                    <td><%= visit.nurse %></td>
-                    <td><%= visit.date.split("T")[0]; %></td>
-                    <td><%= visit.date.split("T")[1].split(".")[0]; %></td>
-                    <td><%= visit.notes %></td>
-                  </tr>  
-                <% }) %> 
+                <% if (visits[0].nurse != null) { %>
+                  <% console.log(visits) %>
+                  <% visits.forEach( (visit)=>{ %>
+                    
+                    <tr>
+                      <td><%= visit.nurse %></td>
+                      <td><%= visit.date.split("T")[0]; %></td>
+                      <td><%= visit.date.split("T")[1].split(".")[0]; %></td>
+                      <td><%= visit.notes %></td>
+                    </tr>  
+                  <% }) %> 
+                <% } %>
               </tbody>
             </table>
           </div>
