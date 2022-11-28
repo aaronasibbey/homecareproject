@@ -1,0 +1,37 @@
+<% include ../partials/header %>
+<% include ../partials/menu %>
+
+<main>
+    <body>
+        <br/>
+        <div class="container">
+            <h3>Assign a medication to a patient:</h3>
+            <br/>
+            <form action="/med" method="POST">
+                <h5>Select a patient:</h4>
+                <select id="selected_patient" name="selected_patient" class="form-control form-control-lg">
+                    <% patientsList.forEach(el => { %>
+                        <option value="<%= el.id %>"> <%- el.legal_name %></option>
+                    <% }) %>
+                </select>
+                <br/>
+                <div class="mb-3">
+                    <h6>Medication Name</h6>
+                    <input type="text" class="form-control" name="medication_name" id="medication_name">
+                  </div>
+                  <div class="mb-3">
+                    <h6>Dosage</h6>
+                    <input type="text" class="form-control" name="dosage" id="dosage">
+                  </div>
+                  <div class="mb-3">
+                    <h6>Frequency</h6>
+                    <input type="text" class="form-control" name="frequency" id="frequency">
+                  </div>
+                <br/>
+                <button id="assignMedication" class="btn btn-primary" type="submit">Assign Medication to Patient</button>
+            </form>
+        </div>
+    </body>
+</main>
+
+<% include ../partials/footer %>

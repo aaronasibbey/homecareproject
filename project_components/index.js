@@ -306,6 +306,46 @@ app.post('/assign', (req,res) => {
     });
 });
 
+app.get('/med', (req, res) =>{
+  // require superuser permissions to view this page
+  if (!req.session.user.permission_level) return res.redirect("/home");
+  else if (req.session.user.permission_level === "family" || req.session.user.permission_level === "nurse") {
+    return res.redirect("/home");
+  }
+  else {
+    const pQuery = `SELECT id, legal_name FROM users 
+      WHERE users.permission_level = 'family';`;
+
+    db.any(pQuery)
+      .then((patientsList) => {
+        res.render("pages/med", {patientsList});
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    }
+});
+
+app.post('/med', (req,res) => {
+  let selected_pat = parseInt(req.body.selected_patient);
+  let name = req.body.medication_name;
+  let dosage = req.body.dosage;
+  let freq = req.body.frequency;
+
+  var query = `INSERT INTO medication(medication_name, dosage, frequency)
+  VALUES ('${name}', '${dosage}', '${freq}');
+  INSERT INTO patient_to_medication(patient_id, medication_id)
+  VALUES (${selected_pat}, (SELECT currval(pg_get_serial_sequence('medication','medication_id'))));`;
+  
+  db.any(query)
+    .then(function (rows) {
+      res.redirect("/superuser");    
+    })
+    .catch(function (error) {
+      res.send({'message' : error});
+    });
+});
+
 app.get('/logout',(req,res)=>{
   req.session.destroy(function (err) {
     res.redirect('/');
