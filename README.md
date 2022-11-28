@@ -1,6 +1,12 @@
 # homecare-project
 
-Our Application, 'HomeCare' is an interactive app to pair privately practicing nurses with patients in need of care at their own homes.  This app has a login feature which seperates the viewers of patient documents from the nurses, which enables permissions that are not given to other nurses.
+Our Application, 'HomeCare' is an interactive app to pair privately practicing nurses with patients in need of care at their own homes.
+
+Patients' family members are able to view updates on the status of their relative which are provided by the nurse(s) who is/are caring for their family member.
+
+Nurses are able to view the medical needs and schedules of each of the patients to which they are assigned and post private updates about their visits with each patient.
+ 
+A superuser administrator is able to register new nurses/patients, and make assignments of which patients are seen by which nurses.
 
 ### Contributors:
 - Jack McKinstry @jackmckinstry
