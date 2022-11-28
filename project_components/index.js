@@ -6,7 +6,7 @@ const session = require('express-session');
 const bcrypt = require('bcrypt');
 const axios = require('axios');
 
-const {addusers, addMedications} = require('./addUsers');
+const {addusers, addMedications, dropData} = require('./addUsers');
 
 
 // database configuration
@@ -24,6 +24,7 @@ const db = pgp(dbConfig);
 db.connect()
 .then(obj => {
     console.log('Database connection successful');
+    dropData(db);
     addusers(db);
     addMedications(db);
     obj.done(); // success, release the connection;

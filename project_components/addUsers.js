@@ -79,17 +79,46 @@ const addusers = async (db)=>{
     await db.any(`INSERT INTO patient_to_nurse 
                   (patient_id, nurse_id) 
                   VALUES (${j}, ${15})`);
+    await db.any(`INSERT INTO visit 
+                  (nurse_id, notes, date) 
+                  VALUES (${15}, '${"Patient was well; up and moving. Took Medication"}', '${Math.floor(Math.random() * 12 + 1)}/${j + 1}/2022')`);
+    await db.any(`INSERT INTO visit 
+                  (nurse_id, notes, date) 
+                  VALUES (${15}, '${"Patient fine but sluggish. Took medication."}', '${Math.floor(Math.random() * 12 + 1)}/${j + 1}/2022')`);
+    await db.any(`INSERT INTO patient_to_visit 
+                  (patient_id, visit_id) 
+                  VALUES (${j}, ${j})`);
+  
   }
   for(let j = 6; j <= 10; j++){
     await db.any(`INSERT INTO patient_to_nurse 
     (patient_id, nurse_id) 
     VALUES (${j}, ${16})`)
+    await db.any(`INSERT INTO visit 
+                  (nurse_id, notes, date) 
+                  VALUES (${16}, '${"Patient was well; up and moving. Took Medication"}', '${Math.floor(Math.random() * 12 + 1)}/${j + 1}/2022')`);
+    await db.any(`INSERT INTO visit 
+                  (nurse_id, notes, date) 
+                  VALUES (${16}, '${"Patient fine but sluggish. Took medication."}', '${Math.floor(Math.random() * 12 + 1)}/${j + 1}/2022')`);
+    await db.any(`INSERT INTO patient_to_visit 
+                  (patient_id, visit_id) 
+                  VALUES (${j}, ${j})`);
+  
   }
   for(let j = 11; j <= 14; j++){
     await db.any(`INSERT INTO patient_to_nurse 
     (patient_id, nurse_id) 
     VALUES (${j}, ${17})`)
-  }
+    await db.any(`INSERT INTO visit 
+                  (nurse_id, notes, date) 
+                  VALUES (${17}, '${"Patient was well; up and moving. Took Medication"}', '${Math.floor(Math.random() * 12 + 1)}/${j + 1}/2022')`);
+    await db.any(`INSERT INTO visit 
+                  (nurse_id, notes, date) 
+                  VALUES (${17}, '${"Patient fine but sluggish. Took medication."}', '${Math.floor(Math.random() * 12 + 1)}/${j + 1}/2022')`);
+    await db.any(`INSERT INTO patient_to_visit 
+                  (patient_id, visit_id) 
+                  VALUES (${j}, ${j})`);
+    }
 }
 
 //The website I looked at to get these listed a lot of antidepressants ig
@@ -146,6 +175,21 @@ const addMedications = async (db)=>{
   }
 }
 
+const dropData = async (db)=>{
+  await db.any(`DELETE FROM patient_to_visit;`)
+  await db.any(`DELETE FROM patient_to_medication;`)
+  await db.any(`DELETE FROM availability;`)
+  await db.any(`DELETE FROM patient_to_nurse;`)
+
+  await db.any(`DELETE FROM medication;`)
+  await db.any('ALTER SEQUENCE medication_medication_id_seq RESTART WITH 1')
+
+  await db.any(`DELETE FROM visit;`)
+  await db.any('ALTER SEQUENCE visit_visit_id_seq RESTART WITH 1')
+
+  await db.any(`DELETE FROM users;`)
+  await db.any('ALTER SEQUENCE users_id_seq RESTART WITH 1')
+}
 
 
-module.exports = {addusers, addMedications};
+module.exports = {addusers, addMedications, dropData};
