@@ -31,12 +31,14 @@ A superuser administrator is able to register new nurses/patients, and make assi
 [Docker](https://www.docker.com/) must be installed
 
 ### How to run the application locally:
-0. From a shell within the /project_components/ directory run: `docker-compose run npm install` on the initial run in order to install node modules
+1. Clone the repository with `git clone https://github.com/jackmckinstry/homecare-project.git`
 
-1. From a shell within the /project_components/ directory run: `docker-compose up` on all starts following the initial
+1. Navigate into the `/homecare-project/project_components/` directory
 
-2. Wait for Docker to print `Database connection successful` in the shell terminal
+1. From a shell within the `/project_components/` directory run: `docker-compose run npm install` on the initial run in order to install node modules **OR** `docker-compose up` on all starts following the initial
 
-3. Navigate to `localhost:3000` in any web browser
+1. Wait for Docker to print `Server is listening on port 3000` and `Database connection successful` in the shell terminal
+
+1. Navigate to `localhost:3000` in any web browser
 
 ### Link to the deployed application // TODO
