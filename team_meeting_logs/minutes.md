@@ -49,3 +49,25 @@
 #### Planning for next meeting:
 - Finish week 3 plan and action items
 - Sign up for a presentation slot
+
+
+
+### 11/28 TA Meeting Minutes
+
+#### Since last meeting:
+- Working authentication (login and session handling)
+- Working superuser portal (registration, nurse/patient assignments)
+- Permissions complete for nurse & patient portals
+- Completed all planned features
+- Release notes v0.0.3 [here](https://github.com/jackmckinstry/homecare-project/releases/tag/v0.0.3)
+
+#### In meeting:
+- Went through all items on week 3 plan and what was completed by each person
+- Updates on code: all complete and mostly tested
+- Showed working demo of entire MVP and demonstrated all features
+
+#### Planning for next meeting:
+- Complete application user testing
+- Complete project report
+- Complete project presentation
+- Deploy working application
