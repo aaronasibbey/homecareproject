@@ -68,15 +68,15 @@ app.get('/login', (req, res) => {
   });
 
 app.post('/login', async (req, res) => {
-  console.log(req.body.username)
+  // console.log(req.body.username)
   const query = "select * from users where username = $1";
     db.any(query, [req.body.username])
     .then(async (data) => {
-      console.log(data)
+      // console.log(data)
       if (data.length  === 0) {
         return res.redirect('/login');
       }
-      console.log(data)
+      // console.log(data)
       const match = await bcrypt.compare(req.body.password, data[0].password);
       if(!match){
         return res.redirect('/register');
@@ -341,7 +341,8 @@ app.get('/patientInfo', (req, res)=> {
     WHERE D.id = ${req.session.user.user_id};`
 
     db.any(patientInfoQuery).then((data) => {
-      res.render("pages/patientInfo", data[0], req.session.user); 
+      console.log(data[0]);
+      res.render("pages/patientInfo", data[0]); 
     })
   }
   else {

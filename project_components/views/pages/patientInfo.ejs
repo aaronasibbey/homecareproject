@@ -2,6 +2,7 @@
 <%- include("../partials/menu") %>
 
 <main>
+  <br/>
   <div class="container">
     <div class="row">
       <div class="col">
@@ -10,7 +11,7 @@
           <div class="card-body">
             <h5 class="card-title">Patient Info</h5>
             <h6 style="color:gray"><%= name %></h6>
-            <table>
+            <table class="table">
               <tbody>
                 <tr>
                   <th>Date of Birth</th>
@@ -24,13 +25,12 @@
             </table>
           </div>
         </div>
-      </div>
-      <div class="col">
+        <br/><br/>
          <!--Patient Medication-->
         <div class="card">
           <div class="card-body">
             <h5 class="card-title">Medication</h5>
-            <table>
+            <table class="table">
               <thead>
                 <tr>
                   <th>Name</th>
@@ -39,13 +39,15 @@
                 </tr>
               </thead>
               <tbody>
-                <% medication.forEach( (med)=>{ %>
-                  <tr>
-                    <td><%= med.name %></td>
-                    <td><%= med.dose %></td>
-                    <td><%= med.frequency %></td>
-                  </tr>  
-                <% }) %> 
+                <% if (medication) {%>
+                  <% medication.forEach(med => { %>
+                    <tr>
+                      <td><%= med.name %></td>
+                      <td><%= med.dose %></td>
+                      <td><%= med.frequency %></td>
+                    </tr>  
+                  <% }) %> 
+                <% } %>
               </tbody>
             </table>
           </div>
@@ -57,7 +59,7 @@
         <div class="card">
           <div class="card-body">
             <h5 class="card-title">Nurse Visits</h5>
-            <table>
+            <table class="table">
               <thead>
                 <tr>
                   <th>Nurse</th>
@@ -70,8 +72,8 @@
                 <% visits.forEach( (visit)=>{ %>
                   <tr>
                     <td><%= visit.nurse %></td>
-                    <td><%= visit.date %></td>
-                    <td><%= visit.time %></td>
+                    <td><%= visit.date.split("T")[0]; %></td>
+                    <td><%= visit.date.split("T")[1].split(".")[0]; %></td>
                     <td><%= visit.notes %></td>
                   </tr>  
                 <% }) %> 
