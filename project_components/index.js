@@ -71,6 +71,13 @@ app.get('/register', (req, res) => {
   });
 
 app.get('/superuser', (req, res) => {
+  if (!req.session.user.permission_level) return res.redirect("/home");
+
+  // require nurse or super perm level for viewing this page, else send a message that user has no access
+  if (req.session.user.permission_level === "family") {
+    return res.redirect("/home");
+  }
+
   res.render("pages/superuser")
 });
 
@@ -79,6 +86,8 @@ let nurseLoggedInID = 1; // TODO temp, remove or update based on login
 let currentPatientID = -1;
 
 app.get('/nurse', (req, res) => {
+  if (!req.session.user.permission_level) return res.redirect("/home"); 
+  
   // require nurse or super perm level for viewing this page, else send a message that user has no access
   if (req.session.user.permission_level === "family") {
     return res.redirect("/home");
