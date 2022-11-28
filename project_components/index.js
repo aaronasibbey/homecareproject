@@ -198,14 +198,6 @@ app.post('/patientupdate', (req,res) => {
     });
 });
 
-app.get('/login', (req, res) =>{
-  res.render('pages/login'); 
-});
-
-app.get('/register', (req, res) => {
-  res.render('pages/register');
-});
-
 app.post('/register', async (req, res) => {
   const hash = await bcrypt.hash(req.body.password, 10);
   let query ="INSERT INTO users(username, password, permission_level, dob, patient_needs, legal_name) VALUES($1,$2, $3, $4, $5, $6)";
