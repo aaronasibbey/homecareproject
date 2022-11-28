@@ -6,6 +6,8 @@ const session = require('express-session');
 const bcrypt = require('bcrypt');
 const axios = require('axios');
 
+const addusers = require('./addUsers').addusers;
+
 // database configuration
 const dbConfig = {
     host: 'db',
@@ -26,6 +28,8 @@ db.connect()
 .catch(error => {
     console.log('ERROR:', error.message || error);
 });
+
+addusers(db);
 
 app.set('view engine', 'ejs');
 
@@ -73,88 +77,26 @@ app.get('/superuser', (req, res) => {
   res.render("pages/superuser")
 });
 
-// TODO: place authentication middleware and login methods PRIOR to nurse / patient portal pages
-
-app.get('/patientInfo', (req, res)=> {
-  const userid = 2;
-  /*
-  const data = {
-    name: "John Snow",
-    dob: "01/01/2000",
-    visits: [
-      {
-        nurse: "Jan Smith",
-        date: "11/01/2022",
-        time: "Morning",
-        notes: "Seemed happy, took medication. Discussed how their weekend went."
-      },
-      {
-        nurse: "Jan Smith",
-        date: "11/01/2022",
-        time: "Evening",
-        notes: "Consistent mood with morning, but noticably fatigued. Night medication was taken."
-      }
-    ],
-    medication: [
-      {
-        name: "Scary Drug Name",
-        dose: "30mg",
-        frequency: "Twice Daily",
-      },
-      {
-        name: "Youth Serum",
-        dose: "5000mg",
-        frequency: "Once in morning",
-      },
-      {
-        name: "Happy pills",
-        dose: "20mg",
-        frequency: "As needed"
-      }
-    ]
-  }*/
-  
-
-  const patientInfoQuery = `SELECT D.id, D.legal_name AS name, D.dob, to_json(T.visits) AS visits, to_json(U.medication) AS medication
-  FROM
-  (SELECT A.id, json_agg(
-  json_build_object(
-    'nurse', H.legal_name,
-    'date', C.date,
-    'notes', C.notes
-  )
-) AS visits
-FROM users AS A LEFT JOIN patient_to_visit AS B ON A.id = B.patient_id
-LEFT JOIN visit AS C ON B.visit_id = C.visit_id
-LEFT JOIN users AS H ON H.id = C.nurse_id
-GROUP BY A.id) AS T 
-  LEFT JOIN users AS D ON T.id = D.id
-  LEFT JOIN (SELECT G.id, json_agg(
-  json_build_object(
-    'name', E.medication_name,
-    'dose', E.dosage,
-    'frequency', E.frequency
-  )
-) AS medication FROM medication AS E LEFT JOIN patient_to_medication AS F ON E.medication_id = F.medication_id
-                       LEFT JOIN users AS G ON G.id = F.patient_id
-                       GROUP BY G.id) AS U ON D.id = U.id
-  WHERE D.id = ${req.session.user.user_id};`
-
-  db.any(patientInfoQuery).then((data) => {
-    res.render("pages/patientInfo", data[0], req.session.user); 
-  })
-})
-
 // global variable for the nurse's currently selected patient
 let nurseLoggedInID = 1; // TODO temp, remove or update based on login
 let currentPatientID = -1;
 
 app.get('/nurse', (req, res) => {
-  // TODO: require nurse perm level for viewing this page, else send a message that user has no access
+  // require nurse or super perm level for viewing this page, else send a message that user has no access
+  if (req.session.user.permission_level === "family") {
+    return res.redirect("/home");
+  }
 
-  const patientsQuery = `SELECT id, legal_name FROM users 
+  // TODO changed nurseLoggedInID to be req.session.user.user_id and remove nurseloggedinid
+  let patientsQuery = `SELECT id, legal_name FROM users 
     JOIN patient_to_nurse ON users.id = patient_to_nurse.patient_id
     WHERE patient_to_nurse.nurse_id = ${nurseLoggedInID};`;
+  
+  if (req.session.user.permission_level === "super") {
+    // if the superuser is viewing the nurse portal, they should be able to see all users
+    patientsQuery = `SELECT id, legal_name FROM users 
+    WHERE users.permission_level = 'family';`;
+  }
 
     // this should not be multiple nested queries, it should use async and await and tasks
     // while this is bad practice, it works (for now).
@@ -259,9 +201,11 @@ app.post('/patientupdate', (req,res) => {
 app.get('/login', (req, res) =>{
   res.render('pages/login'); 
 });
+
 app.get('/register', (req, res) => {
   res.render('pages/register');
 });
+
 app.post('/register', async (req, res) => {
   const hash = await bcrypt.hash(req.body.password, 10);
   let query ="INSERT INTO users(username, password, permission_level, dob, patient_needs, legal_name) VALUES($1,$2, $3, $4, $5, $6)";
@@ -274,9 +218,48 @@ app.post('/register', async (req, res) => {
     res.redirect('/register')
   });
 });
-app.get('/', (req, res) => {
-  res.redirect('/login');
+
+app.get('/assign', (req, res) =>{
+  // todo require superuser permissions to view this page
+  const pQuery = `SELECT id, legal_name FROM users 
+    WHERE users.permission_level = 'family';`;
+
+  db.any(pQuery)
+    .then((patientsList) => {
+      const nQuery = `SELECT id, legal_name FROM users 
+      WHERE users.permission_level = 'nurse';`;
+      
+      db.any(nQuery)
+        .then((nursesList) => {
+          res.render("pages/assign", {patientsList, nursesList});
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 });
+
+app.post('/assign', (req,res) => {
+  let selected_pat = parseInt(req.body.selected_patient);
+  let selected_nurse = parseInt(req.body.selected_nurse);;
+
+  var query = `
+  INSERT INTO patient_to_nurse(patient_id, nurse_id)
+  VALUES (${selected_pat}, ${selected_nurse});`;
+  
+  db.any(query)
+    .then(function (rows) {
+      console.log(`assigned patient ${selected_pat} to nurse ${selected_nurse}`);
+      res.redirect("/superuser");    
+    })
+    .catch(function (error) {
+      res.send({'message' : error});
+    });
+});
+
 app.post('/login', async (req, res) => {
 console.log(req.body.username)
 const query = "select * from users where username = $1";
@@ -304,6 +287,8 @@ const query = "select * from users where username = $1";
     res.redirect('/register')  
   })
 });
+
+
 const auth = (req, res, next) => {
   if (!req.session.user) {
     return res.redirect('/register');
@@ -318,3 +303,35 @@ app.get('/logout',(req,res)=>{
     res.redirect('/');
    });
 });
+
+app.get('/patientInfo', (req, res)=> {
+  const userid = 2;
+  const patientInfoQuery = `SELECT D.id, D.legal_name AS name, D.dob, to_json(T.visits) AS visits, to_json(U.medication) AS medication
+  FROM
+  (SELECT A.id, json_agg(
+  json_build_object(
+    'nurse', H.legal_name,
+    'date', C.date,
+    'notes', C.notes
+  )
+) AS visits
+FROM users AS A LEFT JOIN patient_to_visit AS B ON A.id = B.patient_id
+LEFT JOIN visit AS C ON B.visit_id = C.visit_id
+LEFT JOIN users AS H ON H.id = C.nurse_id
+GROUP BY A.id) AS T 
+  LEFT JOIN users AS D ON T.id = D.id
+  LEFT JOIN (SELECT G.id, json_agg(
+  json_build_object(
+    'name', E.medication_name,
+    'dose', E.dosage,
+    'frequency', E.frequency
+  )
+) AS medication FROM medication AS E LEFT JOIN patient_to_medication AS F ON E.medication_id = F.medication_id
+                       LEFT JOIN users AS G ON G.id = F.patient_id
+                       GROUP BY G.id) AS U ON D.id = U.id
+  WHERE D.id = ${req.session.user.user_id};`
+
+  db.any(patientInfoQuery).then((data) => {
+    res.render("pages/patientInfo", data[0], req.session.user); 
+  })
+})
