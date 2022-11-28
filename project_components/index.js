@@ -67,18 +67,23 @@ app.get('/login', (req, res) => {
   });
 
 app.get('/register', (req, res) => {
-    res.render("pages/register");
+  // superuser is the one registering users, only they should be able to access this page
+  
+  if (!req.session.user.permission_level) return res.redirect("/home");
+  // require superuser perm level for viewing this page
+  if (req.session.user.permission_level === "family" || req.session.user.permission_level === "nurse") {
+    return res.redirect("/home");
+  }
+  else res.render("pages/register");
   });
 
 app.get('/superuser', (req, res) => {
   if (!req.session.user.permission_level) return res.redirect("/home");
-
-  // require nurse or super perm level for viewing this page, else send a message that user has no access
-  if (req.session.user.permission_level === "family") {
+  // require superuser perm level for viewing this page
+  if (req.session.user.permission_level === "family" || req.session.user.permission_level === "nurse") {
     return res.redirect("/home");
   }
-
-  res.render("pages/superuser")
+  else res.render("pages/superuser");
 });
 
 // global variable for the nurse's currently selected patient
