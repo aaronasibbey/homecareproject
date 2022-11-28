@@ -66,12 +66,51 @@ app.get('/login', (req, res) => {
     res.render("pages/login");
   });
 
+app.post('/login', async (req, res) => {
+  console.log(req.body.username)
+  const query = "select * from users where username = $1";
+    db.any(query, [req.body.username])
+    .then(async (data) => {
+      console.log(data)
+      if (data.length  === 0) {
+        return res.redirect('/login')
+      }
+      console.log(data)
+      const match = await bcrypt.compare(req.body.password, data[0].password);
+      if(!match){
+        return res.redirect('/register')
+      } else {
+        req.session.user = {
+          user_id: data[0].id,
+          permission_level: data[0].permission_level,
+        };
+        req.session.save();
+        return res.redirect('/home')
+      }
+    })
+    .catch(e => {
+      console.log(e);
+      res.redirect('/register')  
+    })
+  });
+    
+
+// pages / methods below are only for logged in users
+const auth = (req, res, next) => {
+  if (!req.session.user) {
+    return res.redirect('/login');
+  }
+  next();
+};
+
+app.use(auth);
+
 app.get('/register', (req, res) => {
   // superuser is the one registering users, only they should be able to access this page
-  
+
   if (!req.session.user.permission_level) return res.redirect("/home");
   // require superuser perm level for viewing this page
-  if (req.session.user.permission_level === "family" || req.session.user.permission_level === "nurse") {
+  else if (req.session.user.permission_level === "family" || req.session.user.permission_level === "nurse") {
     return res.redirect("/home");
   }
   else res.render("pages/register");
@@ -80,7 +119,7 @@ app.get('/register', (req, res) => {
 app.get('/superuser', (req, res) => {
   if (!req.session.user.permission_level) return res.redirect("/home");
   // require superuser perm level for viewing this page
-  if (req.session.user.permission_level === "family" || req.session.user.permission_level === "nurse") {
+  else if (req.session.user.permission_level === "family" || req.session.user.permission_level === "nurse") {
     return res.redirect("/home");
   }
   else res.render("pages/superuser");
@@ -92,9 +131,8 @@ let currentPatientID = -1;
 
 app.get('/nurse', (req, res) => {
   if (!req.session.user.permission_level) return res.redirect("/home"); 
-  
   // require nurse or super perm level for viewing this page, else send a message that user has no access
-  if (req.session.user.permission_level === "family") {
+  else if (req.session.user.permission_level === "family") {
     return res.redirect("/home");
   }
 
@@ -262,44 +300,6 @@ app.post('/assign', (req,res) => {
       res.send({'message' : error});
     });
 });
-
-app.post('/login', async (req, res) => {
-console.log(req.body.username)
-const query = "select * from users where username = $1";
-  db.any(query, [req.body.username])
-  .then(async (data) => {
-    console.log(data)
-    if (data.length  === 0) {
-      return res.redirect('/login')
-    }
-    console.log(data)
-    const match = await bcrypt.compare(req.body.password, data[0].password);
-    if(!match){
-      return res.redirect('/register')
-    } else {
-      req.session.user = {
-        user_id: data[0].id,
-        permission_level: data[0].permission_level,
-      };
-      req.session.save();
-      return res.redirect('/home')
-    }
-  })
-  .catch(e => {
-    console.log(e);
-    res.redirect('/register')  
-  })
-});
-
-
-const auth = (req, res, next) => {
-  if (!req.session.user) {
-    return res.redirect('/register');
-  }
-  next();
-};
-
-app.use(auth);
 
 app.get('/logout',(req,res)=>{
   req.session.destroy(function (err) {
