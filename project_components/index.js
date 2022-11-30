@@ -96,7 +96,13 @@ app.post('/login', async (req, res) => {
         req.session.save();
         // console.log(`query uid: ${data[0].id}   query permission_level: ${data[0].permission_level}`);
         // console.log(`session user_id: ${req.session.user.user_id}   session permission_level: ${req.session.user.permission_level} `);
-        return res.redirect('/home');
+        if(req.session.user && req.session.user.permission_level == 'nurse')
+          return res.redirect('/nurse')
+        if(req.session.user && req.session.user.permission_level == 'family')
+          return res.redirect('/patientinfo')
+        if(req.session.user && req.session.user.permission_level == 'super')
+          return res.redirect('/superuser')
+        return res.redirect('/home')
       }
     })
     .catch(e => {
