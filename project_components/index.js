@@ -57,13 +57,19 @@ app.use(
 app.listen(3000);
 console.log('Server is listening on port 3000');
 
+app.use((req, res, next) => {
+  if(req.session.user)
+    res.locals.user = req.session.user;
+  next();
+})
+
 app.get('/', (req, res) =>{
     res.redirect('/home');
   });
 
 app.get('/home', (req, res) => {
     res.render("pages/home");
-  });
+});
 
 app.get('/login', (req, res) => {
     res.render("pages/login");
