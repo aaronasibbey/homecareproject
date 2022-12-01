@@ -41,4 +41,10 @@ A superuser administrator is able to register new nurses/patients, and make assi
 
 1. Navigate to `localhost:3000` in any web browser
 
-### Link to the deployed application // TODO
+### Deployed Application
+
+The deployed application can be used [here](http://csci3308.int.colorado.edu:49158) if connected to the CU Boulder Wireless network
+
+### Video Demo
+
+https://user-images.githubusercontent.com/89474444/204945542-9e1c592c-6a83-464e-9715-60ef892e7b28.mp4
