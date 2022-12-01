@@ -265,7 +265,7 @@ app.post('/register', async (req, res) => {
   let query ="INSERT INTO users(username, password, permission_level, dob, patient_needs, legal_name) VALUES($1,$2, $3, $4, $5, $6)";
   db.any(query, [req.body.username, hash, req.body.permission_level, req.body.dob, req.body.patient_needs, req.body.legal_name])
   .then(()=> {
-    res.redirect('/login')
+    res.redirect('/superuser')
   })
   .catch(function (err) {
     console.log(err);
